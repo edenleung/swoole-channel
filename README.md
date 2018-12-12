@@ -1,5 +1,11 @@
 # swoole-channel
 #### 作者参考了 workerman/channel
+
+### 安装
+~~~
+composer require xiaodi/swoole-channel
+~~~
+
 ### 服务端
 `server.php`
 ~~~

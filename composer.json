@@ -1,0 +1,19 @@
+{
+    "name": "xiaodi/swoole-channel",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "halo",
+            "email": "saybabi@163.com"
+        }
+    ],
+    "require": {
+        "php": ">= 7.0",
+        "ext-swoole": ">=1.9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "xiaodi\\Channel\\": "src/"
+        }
+    }
+}

@@ -1,6 +1,10 @@
 # swoole-channel
 #### 作者参考了 workerman/channel
-
+### docker测试
+~~~
+docker pull twosee/swoole-coroutine
+docker run -ti -p 9501:9501 -p 9502:9502 -p 9503:9503 -v /c/swoole:/home twosee/swoole-coroutine
+~~~
 ### 安装
 ~~~
 composer require xiaodi/swoole-channel

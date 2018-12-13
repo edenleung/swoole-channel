@@ -4,6 +4,17 @@ namespace xiaodi\Channel;
 class Client
 {
     protected static $_events = array();
+
+    protected static $_remoteIp = '';
+
+    protected static $_remotePort = '';
+
+    public static function config($ip = '127.0.0.1', $port = '9501')
+    {
+        self::$_remoteIp = $ip;
+        self::$_remotePort = $port;
+    }
+
     /**
      * 订阅事件
      *
@@ -37,7 +48,7 @@ class Client
         $client->on("close", function ($cli) {
         });
 
-        $client->connect('0.0.0.0', 9501, 0.5);
+        $client->connect(self::$_remoteIp, self::$_remotePort, 0.5);
     }
 
     /**
@@ -49,22 +60,17 @@ class Client
      */
     public static function publish(String $event, $data)
     {
-        $client = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
+        $client = new \swoole_client(SWOOLE_SOCK_TCP);
+        if (!$client->connect(self::$_remoteIp, self::$_remotePort, -1))
+        {
+            exit("connect failed. Error: {$client->errCode}\n");
+        }
 
-        $client->on("connect", function ($cli) use ($event, $data) {
-            $params['type'] = 'publish';
-            $params['event'] = $event;
-            $params['data'] = $data;
-            $cli->send(serialize((array)$params));
-        });
+        $params['type'] = 'publish';
+        $params['event'] = $event;
+        $params['data'] = $data;
 
-        $client->on("error", function ($cli) {
-            throw new \Exception('连接ChannelServer失败!');
-        });
-
-        $client->on("close", function ($cli) {
-        });
-
-        $client->connect('0.0.0.0', 9501, 0.5);
+        $client->send(serialize((array)$params));
+        $client->close();
     }
 }

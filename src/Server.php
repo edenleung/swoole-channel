@@ -73,6 +73,7 @@ class Server
 
             case 'publish':
                 {
+                    echo "服务端收到广播事件\n";
                     $event = $data['event'];
                     $table_event = $this->table->get($event);
                     if ($table_event) {

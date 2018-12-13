@@ -5,11 +5,18 @@ class Client
 {
     protected static $_events = array();
 
-    protected static $_remoteIp = '';
+    protected static $_remoteIp = '127.0.0.1';
 
-    protected static $_remotePort = '';
+    protected static $_remotePort = 9501;
 
-    public static function config($ip = '127.0.0.1', $port = '9501')
+    /**
+     * 自定义配置
+     *
+     * @param string $ip
+     * @param string $port
+     * @return void
+     */
+    public static function config($ip, $port)
     {
         self::$_remoteIp = $ip;
         self::$_remotePort = $port;
@@ -24,6 +31,10 @@ class Client
      */
     public static function on($event, $callback)
     {
+        if (PHP_SAPI !== 'cli') {
+            throw new \Exception('监听事件只支持CLI模式');
+        }
+
         $client = new \swoole_client(SWOOLE_SOCK_TCP, SWOOLE_SOCK_ASYNC);
 
         $client->on("connect", function ($cli) use ($event, $callback) {
@@ -42,10 +53,11 @@ class Client
         });
 
         $client->on("error", function ($cli) {
-            throw new \Exception('连接ChannelServer失败!');
+            throw new \Exception('连接服务失败!');
         });
 
         $client->on("close", function ($cli) {
+            echo 'close';
         });
 
         $client->connect(self::$_remoteIp, self::$_remotePort, 0.5);
@@ -61,9 +73,8 @@ class Client
     public static function publish(String $event, $data)
     {
         $client = new \swoole_client(SWOOLE_SOCK_TCP);
-        if (!$client->connect(self::$_remoteIp, self::$_remotePort, -1))
-        {
-            exit("connect failed. Error: {$client->errCode}\n");
+        if (!$client->connect(self::$_remoteIp, self::$_remotePort, -1)) {
+            throw new \Exception("connect failed. Error: {$client->errCode}\n");
         }
 
         $params['type'] = 'publish';

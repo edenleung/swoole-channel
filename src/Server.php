@@ -5,10 +5,9 @@ use Swoole\Table;
 
 class Server
 {
-
     protected $server = null;
 
-    protected $table = '';
+    protected $table = null;
 
     /**
      * Server constructor.
@@ -95,5 +94,4 @@ class Server
     {
         echo "connection close: {$fd}\n";
     }
-
 }

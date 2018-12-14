@@ -23,6 +23,9 @@ $server->run();
 ~~~
 use xiaodi\Channel\Client;
 
+// 自定义配置
+Client::config('127.0.0.1', 9501);
+
 // 添加监听
 Client::on('sayHello', function($msg) {
     echo '我被回调了' . $msg;

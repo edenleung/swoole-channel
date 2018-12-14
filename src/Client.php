@@ -72,8 +72,9 @@ class Client
      */
     public static function publish(String $event, $data)
     {
-        $client = new \swoole_client(SWOOLE_SOCK_TCP);
-        if (!$client->connect(self::$_remoteIp, self::$_remotePort, -1)) {
+        // 协程模式
+        $client = new \Swoole\Coroutine\Client(SWOOLE_SOCK_TCP);
+        if (!$client->connect(self::$_remoteIp, self::$_remotePort, 0.5)) {
             throw new \Exception("connect failed. Error: {$client->errCode}\n");
         }
 
@@ -81,6 +82,7 @@ class Client
         $params['event'] = $event;
         $params['data'] = $data;
 
+        // 发送数据
         $client->send(serialize((array)$params));
         $client->close();
     }
